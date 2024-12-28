@@ -1,0 +1,58 @@
+from IPython.display import display, Math
+from sympy import *
+
+
+
+# Функция формирования бинарной строки заданной длины:
+def get_binar_string (n, count = 0): 
+    # n - номер двоичного набора
+    # count - минимальная длина бинарной строки (включая незначащие нули)
+    binar_string = format(n, 'b')
+    new_binar_string_with_zeroes = '0' * (count - len(binar_string)) + binar_string
+    return new_binar_string_with_zeroes 
+
+# Функция вычисления расстояния Хэмминга:
+def hamming_distance(binar_string_1, binar_string_2): 
+    return sum(symbol_1 != symbol_2 for symbol_1, symbol_2 in zip(binar_string_1, binar_string_2))
+
+
+# Гамильтониан 𝐻1 (1):
+def create_H1 (n):
+    matrix = []
+    for j in range(2**n):
+        row = []
+        for i in range(2**n):
+            ij = hamming_distance(get_binar_string(i, n), get_binar_string(j, n))
+            row.append(ij)
+        matrix.append(row)
+    return Matrix(matrix)
+
+# Гамильтониан 𝐻2 (2):
+def create_H2 (n=1):
+    alpha = Symbol('alpha', real = True)
+    matrix = []
+    for j in range(2**n):
+        row = []
+        for i in range(2**n):
+            ij = get_binar_string(i, n).count('1') - get_binar_string(j,n).count('1')
+            row.append(exp(1j*alpha*ij))
+        matrix.append(row)
+    return Matrix(matrix)
+
+display(create_H1(n = 2))
+
+display(create_H2(n = 2))
+
+display(create_H1(n = 3))
+
+display(create_H2(n = 3))
+
+H_1 = create_H1(n = 2)
+display(H_1.eigenvects())
+pretty_print(H_1.eigenvects())
+
+print('--------------')
+
+H_2 = create_H2(n = 2)
+display(H_2.eigenvects())
+pretty_print(H_2.eigenvects())
